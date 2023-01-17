@@ -51,16 +51,16 @@ function mysqlUrl(dbName) {
 
 function mysql8Connection(dbName) {
   assert(
-    process.env.MYSQL_HOST,
-    'Environment variable MYSQL_HOST must be defined'
+    process.env.DB_HOST,
+    'Environment variable DB_HOST must be defined'
   )
 
   // return process.env.MYSQL_URL + dbName
   return {
-    host: process.env.MYSQL_HOST,
+    host: process.env.DB_HOST,
     port: process.env.MYSQL_PORT,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
     database: dbName
 
   };

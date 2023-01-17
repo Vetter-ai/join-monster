@@ -6,7 +6,7 @@ const path = require('path')
 const Promise = require('bluebird')
 
 module.exports = function (db, name) {
-  const { ORACLE_URL, PG_URL, MYSQL_URL } = process.env
+  const { ORACLE_URL, PG_URL, MYSQL_URL, DB_HOST } = process.env
 
   if (db === 'oracle') {
     console.log('building oracle')
@@ -72,16 +72,16 @@ module.exports = function (db, name) {
 
   if (db === 'mysql8') {
     assert(
-      MYSQL_HOST,
-      'Must provide environment variable MYSQL_HOST'
+      DB_HOST,
+      'Must provide environment variable DB_HOST'
     )
     const knex = require('knex')({
       client: 'mysql2',
       connection: {
-        host: process.env.MYSQL_HOST,
+        host: process.env.DB_HOST,
         port: process.env.MYSQL_PORT,
-        user: process.env.MYSQL_USER,
-        password: process.env.MYSQL_PASSWORD,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
         database: name
       }
 
