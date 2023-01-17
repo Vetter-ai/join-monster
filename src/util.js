@@ -1,7 +1,8 @@
 import util from 'util'
 import assert from 'assert'
 import idx from 'idx'
-import { nest } from '@stem/nesthydrationjs'
+// import { nest } from '@stem/nesthydrationjs'
+import NestHydrationJS from 'nesthydrationjs'
 import stringifySQL from './stringifiers/dispatcher'
 import resolveUnions from './resolve-unions'
 import deprecate from 'deprecate'
@@ -37,7 +38,7 @@ export function ensure(obj, prop, name) {
   if (!obj[prop]) {
     throw new Error(
       `property "${prop}" must be defined on object: ${name ||
-        util.inspect(obj)}`
+      util.inspect(obj)}`
     )
   }
   return obj[prop]
@@ -173,7 +174,7 @@ export function handleUserDbCall(dbCall, sql, sqlAST, shapeDefinition) {
             debug(emphasize('RAW_DATA'), inspect(rows.slice(0, 8)))
             debug(`${rows.length} rows...`)
           }
-          const data = nest(rows, shapeDefinition)
+          const data = NestHydrationJS().nest(rows, shapeDefinition)
           resolveUnions(data, sqlAST)
           if (debug.enabled) {
             debug(emphasize('SHAPED_DATA', inspect(data)))
@@ -195,7 +196,7 @@ export function handleUserDbCall(dbCall, sql, sqlAST, shapeDefinition) {
       }
       // hydrate the data
       // take that shape definition we produced and pass it to the NestHydrationJS library
-      const data = nest(rows, shapeDefinition)
+      const data = NestHydrationJS().nest(rows, shapeDefinition)
       resolveUnions(data, sqlAST)
       if (debug.enabled) {
         debug(emphasize('SHAPED_DATA'), inspect(data))
@@ -251,13 +252,13 @@ export async function compileSqlAST(sqlAST, context, options) {
 export function sortKeyColumns(sortKey) {
   return Array.isArray(sortKey)
     ? sortKey.map(sort => {
-        assert(
-          sort.column,
-          `Each sortKey entry in an array must have a 'column' property, got ${JSON.stringify(
-            sortKey
-          )} instead`
-        )
-        return sort.column
-      })
+      assert(
+        sort.column,
+        `Each sortKey entry in an array must have a 'column' property, got ${JSON.stringify(
+          sortKey
+        )} instead`
+      )
+      return sort.column
+    })
     : wrap(sortKey.key)
 }

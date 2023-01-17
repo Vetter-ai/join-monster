@@ -102,7 +102,7 @@
     "graphql": "^15.4.0",
     "graphsiql": "0.2.0",
     "idx": "^2.5.6",
-    "jsdoc-to-markdown": "^5.0.0",
+    "jsdoc-to-markdown": "^8.0.0",
     "kcors": "^2.2.1",
     "knex": "^2.4.0",
     "koa": "^2.0.1",
@@ -118,11 +118,11 @@
     "tsd": "^0.13.1"
   },
   "dependencies": {
-    "@stem/nesthydrationjs": "0.4.0",
     "debug": "^4.1.0",
     "deprecate": "^1.0.0",
     "generatorics": "^1.0.8",
     "graphql-relay": "^0.7.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "nesthydrationjs": "github:CoursePark/NestHydrationJS#v2.0.0"
   }
 }
