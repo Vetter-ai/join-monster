@@ -8,7 +8,7 @@ module.exports = function dbCall(sql, knex, context) {
     )
   }
   return knex.raw(sql).then(result => {
-    if (knex.client.config.client === 'mysql') {
+    if (knex.client.config.client === 'mysql2' || knex.client.config.client === 'mysql') {
       return result[0]
     }
     return result

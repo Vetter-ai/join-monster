@@ -14,6 +14,7 @@ import Sponsor from './Sponsor'
 import { fromBase64, q } from '../shared'
 
 import mysqlModule from '../../src/stringifiers/dialects/mysql'
+import mysql8Module from '../../src/stringifiers/dialects/mysql8'
 import oracleModule from '../../src/stringifiers/dialects/oracle'
 import pgModule from '../../src/stringifiers/dialects/pg'
 import sqlite3Module from '../../src/stringifiers/dialects/sqlite3'
@@ -26,6 +27,8 @@ const options = {
 }
 if (knex.client.config.client === 'mysql') {
   options.dialectModule = mysqlModule
+} else if (knex.client.config.client === 'mysql2') {
+  options.dialectModule = mysql8Module
 } else if (knex.client.config.client === 'pg') {
   options.dialectModule = pgModule
 } else if (knex.client.config.client === 'oracledb') {
@@ -106,7 +109,9 @@ export default new GraphQLObjectType({
         return joinMonster(
           resolveInfo,
           context,
-          sql => dbCall(sql, knex, context),
+          sql => {
+            return dbCall(sql, knex, context);
+          },
           options
         )
       }
@@ -137,7 +142,7 @@ export default new GraphQLObjectType({
             knex
               .raw(sql)
               .then(result => {
-                if (options.dialectModule.name === 'mysql') {
+                if (options.dialectModule.name === 'mysql' || options.dialectModule.name === 'mysql8') {
                   done(null, result[0])
                 } else {
                   done(null, result)

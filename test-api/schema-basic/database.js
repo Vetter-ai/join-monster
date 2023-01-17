@@ -8,18 +8,23 @@ const connection =
   process.env.NODE_ENV !== 'test'
     ? { filename: path.join(__dirname, '../data/db/test1-data.sl3') }
     : dbType === 'PG'
-    ? pgUrl('test1')
-    : dbType === 'MYSQL'
-    ? mysqlUrl('test1')
-    : dbType === 'ORACLE'
-    ? oracleUrl('test1')
-    : { filename: path.join(__dirname, '../data/db/test1-data.sl3') }
+      ? pgUrl('test1')
+      : dbType === 'MYSQL'
+        ? mysqlUrl('test1')
+        : dbType === 'MYSQL8'
+          ? mysql8Connection('test1')
+          : dbType === 'ORACLE'
+            ? oracleUrl('test1')
+            : { filename: path.join(__dirname, '../data/db/test1-data.sl3') }
 
 let client = 'sqlite3'
+
 if (dbType === 'PG') {
   client = 'pg'
 } else if (dbType === 'MYSQL') {
   client = 'mysql'
+} else if (dbType === 'MYSQL8') {
+  client = 'mysql2'
 } else if (dbType === 'ORACLE') {
   client = 'oracledb'
 }
@@ -39,7 +44,26 @@ function mysqlUrl(dbName) {
     process.env.MYSQL_URL,
     'Environment variable MYSQL_URL must be defined, e.g. "mysql://user:pass@localhost/"'
   )
+
   return process.env.MYSQL_URL + dbName
+
+}
+
+function mysql8Connection(dbName) {
+  assert(
+    process.env.MYSQL_HOST,
+    'Environment variable MYSQL_HOST must be defined'
+  )
+
+  // return process.env.MYSQL_URL + dbName
+  return {
+    host: process.env.MYSQL_HOST,
+    port: process.env.MYSQL_PORT,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: dbName
+
+  };
 }
 
 function oracleUrl(dbName) {
