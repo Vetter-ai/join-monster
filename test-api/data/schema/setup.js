@@ -5,8 +5,8 @@ const fs = require('fs')
 const path = require('path')
 const Promise = require('bluebird')
 
-module.exports = function(db, name) {
-  const { ORACLE_URL, PG_URL, MYSQL_URL } = process.env
+module.exports = function (db, name) {
+  const { ORACLE_URL, PG_URL, MYSQL_URL, DB_HOST } = process.env
 
   if (db === 'oracle') {
     console.log('building oracle')
@@ -58,6 +58,34 @@ module.exports = function(db, name) {
     const knex = require('knex')({
       client: 'mysql',
       connection: MYSQL_URL + name
+    })
+    const ddl = fs
+      .readFileSync(`${__dirname}/mysql.sql`, 'utf8')
+      .split(';')
+      .map(stmt => stmt.trim())
+      .filter(stmt => !!stmt)
+    for (let stmt of ddl) {
+      console.log(stmt)
+    }
+    return Promise.each(ddl, stmt => knex.raw(stmt)).then(() => knex)
+  }
+
+  if (db === 'mysql8') {
+    assert(
+      DB_HOST,
+      'Must provide environment variable DB_HOST'
+    )
+    const knex = require('knex')({
+      client: 'mysql2',
+      connection: {
+        host: process.env.DB_HOST,
+        port: process.env.MYSQL_PORT,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: name
+      }
+
+
     })
     const ddl = fs
       .readFileSync(`${__dirname}/mysql.sql`, 'utf8')
